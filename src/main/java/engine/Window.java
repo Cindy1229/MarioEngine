@@ -4,10 +4,14 @@ import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+/**
+ * This is a singleton window class
+ */
 public class Window {
     private int width;
     private int height;
@@ -33,6 +37,14 @@ public class Window {
         System.out.println("This Engine is running LWJGL - Version " + Version.getVersion());
         init();
         loop();
+
+        // free mem
+        glfwFreeCallbacks(glfwWindow);
+        glfwDestroyWindow(glfwWindow);
+
+        // clean up
+        glfwTerminate();
+        glfwSetErrorCallback(null).free();
     }
 
     public void init() {
@@ -55,6 +67,11 @@ public class Window {
         if (glfwWindow == NULL) {
             throw new IllegalStateException("Failed to create window");
         }
+
+        // register mouse listener to glfw
+        glfwSetCursorPosCallback(glfwWindow, MouseListener::mousePosCallback);
+        glfwSetMouseButtonCallback(glfwWindow, MouseListener::mouseButtonCallback);
+        glfwSetScrollCallback(glfwWindow, MouseListener::mouseScrollCallback);
 
         // make openGL context current
         glfwMakeContextCurrent(glfwWindow);
