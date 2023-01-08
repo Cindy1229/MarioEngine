@@ -3,6 +3,7 @@ package engine;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
+import util.Time;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -20,11 +21,13 @@ public class Window {
     // singleton
     private static Window window = null;
 
-    private float r,g,b,a;
+    private static Scene currentScene = null;
+
+    public float r,g,b,a;
 
     private Window() {
-        this.width = 1920;
-        height = 1080;
+        this.width = 800;
+        height = 800;
         this.title = "Mario";
         r=1;
         g=1;
@@ -90,16 +93,48 @@ public class Window {
 
         GL.createCapabilities();
 
+        // start scene
+        Window.changeScene(0);
+
     }
 
     public void loop() {
+        float beginTime = Time.getTime();
+        float endTime = Time.getTime();
+        float dt = -1.0f;
+
+        // executes every frame
         while(!glfwWindowShouldClose(glfwWindow)) {
             // poll events
             glfwPollEvents();
             glClearColor(r, g, b, a);
             glClear(GL_COLOR_BUFFER_BIT);
 
+            if (dt >= 0) {
+                currentScene.update(dt);
+            }
+
             glfwSwapBuffers(glfwWindow);
+            endTime = Time.getTime();
+            dt = endTime - beginTime;
+            beginTime = endTime;
+
+            if (KeyListener.isKeyPressed(GLFW_KEY_ESCAPE)) {
+                glfwSetWindowShouldClose(glfwWindow, true);
+            }
+        }
+    }
+
+    public static void changeScene(int newScene) {
+        switch (newScene) {
+            case 0:
+                currentScene = new LevelEditorScene();
+                break;
+            case 1:
+                currentScene = new LevelScene();
+                break;
+            default:
+                assert false : "Unknown Scene " + newScene + "";
         }
     }
 }
