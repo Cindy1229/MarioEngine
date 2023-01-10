@@ -1,6 +1,7 @@
 package engine;
 
 import org.lwjgl.BufferUtils;
+import renderer.Shader;
 
 import java.awt.event.KeyEvent;
 import java.nio.FloatBuffer;
@@ -33,7 +34,7 @@ public class LevelEditorScene extends Scene {
             "    color = fColor;\n" +
             "}";
 
-    private int vertexID, fragmentID, shaderProgram;
+    private Shader defaultShader;
 
     // VBO
     private float[] vertexArray = {
@@ -58,28 +59,9 @@ public class LevelEditorScene extends Scene {
 
     @Override
     public void init() {
-        // compile shaders
-        vertexID = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vertexID, vertexShaderSrc);
-        glCompileShader(vertexID);
-
-        // check for errors
-        checkShaderCompileStatus(vertexID);
-
-        fragmentID = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fragmentID, fragmentShaderSrc);
-        glCompileShader(fragmentID);
-
-        checkShaderCompileStatus(fragmentID);
-
-        // link
-        shaderProgram = glCreateProgram();
-        glAttachShader(shaderProgram, vertexID);
-        glAttachShader(shaderProgram, fragmentID);
-        glLinkProgram(shaderProgram);
-
-        // check errors
-        checkShaderLinkStatus(shaderProgram);
+        // initiliaze and compile shaders
+        defaultShader = new Shader("assets/shaders/default.glsl");
+        defaultShader.compile();
 
         // generate VAO
         vaoID = glGenVertexArrays();
@@ -117,8 +99,8 @@ public class LevelEditorScene extends Scene {
 
     @Override
     public void update(float dt) {
-        // bind shader
-        glUseProgram(shaderProgram);
+        // tell opengl to use shader program compiled
+        defaultShader.use();
         // bind VAO
         glBindVertexArray(vaoID);
         // enable vertex attrib pointers
@@ -133,36 +115,12 @@ public class LevelEditorScene extends Scene {
         glDisableVertexAttribArray(1);
 
         glBindVertexArray(0);
-        glUseProgram(0);
+
+        // detach shader program
+        defaultShader.detach();
 
     }
 
-    /**
-     * Check if shader compiled successfully
-     * @param shaderID
-     */
-    private void checkShaderCompileStatus(int shaderID) {
-        int success = glGetShaderi(shaderID, GL_COMPILE_STATUS);
-        if (success == GL_FALSE) {
-            int len = glGetShaderi(shaderID, GL_INFO_LOG_LENGTH);
-            System.out.println("Error: shader compilation failed");
-            System.out.println(glGetShaderInfoLog(shaderID, len));
-            assert false : "";
-        }
-    }
 
-    /**
-     * Check if shaders linked successfully
-     * @param shaderProgram
-     */
-    private void checkShaderLinkStatus(int shaderProgram) {
-        int success = glGetProgrami(shaderProgram, GL_LINK_STATUS);
-        if (success == GL_FALSE) {
-            int len = glGetProgrami(shaderProgram, GL_INFO_LOG_LENGTH);
-            System.out.println("Error: shader linking failed");
-            System.out.println(glGetProgramInfoLog(shaderProgram, len));
-            assert false : "";
-        }
-    }
 
 }
