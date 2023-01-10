@@ -1,5 +1,6 @@
 package engine;
 
+import org.joml.Vector2f;
 import org.lwjgl.BufferUtils;
 import renderer.Shader;
 
@@ -39,9 +40,9 @@ public class LevelEditorScene extends Scene {
     // VBO
     private float[] vertexArray = {
             // pos                  // color
-            0.5f, -0.5f, 0.0f,      1.0f, 0.0f, 0.0f, 1.0f,     // bottom right, red
-            -0.5f, 0.5f, 0.0f,      0.0f, 1.0f, 0.0f, 1.0f,     // top left, green
-            0.5f, 0.5f, 0.0f,       0.0f, 0.0f, 1.0f, 1.0f,     // top right, blue
+            100.5f, -0.5f, 0.0f,      1.0f, 0.0f, 0.0f, 1.0f,     // bottom right, red
+            -0.5f, 100.5f, 0.0f,      0.0f, 1.0f, 0.0f, 1.0f,     // top left, green
+            100.5f, 100.5f, 0.0f,       0.0f, 0.0f, 1.0f, 1.0f,     // top right, blue
             -0.5f, -0.5f, 0.0f,      1.0f, 1.0f, 1.0f, 1.0f      // bottom left, white
     };
 
@@ -59,7 +60,10 @@ public class LevelEditorScene extends Scene {
 
     @Override
     public void init() {
-        // initiliaze and compile shaders
+        // initialize camera
+        camera = new Camera(new Vector2f(0.0f, 0.0f));
+
+        // initialize and compile shaders
         defaultShader = new Shader("assets/shaders/default.glsl");
         defaultShader.compile();
 
@@ -101,6 +105,11 @@ public class LevelEditorScene extends Scene {
     public void update(float dt) {
         // tell opengl to use shader program compiled
         defaultShader.use();
+
+        // Load projection/view matrix value
+        defaultShader.uploadMat4f("uProjection", camera.getProjectionMatrix());
+        defaultShader.uploadMat4f("uView", camera.getViewMatrix());
+
         // bind VAO
         glBindVertexArray(vaoID);
         // enable vertex attrib pointers
