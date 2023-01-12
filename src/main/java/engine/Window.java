@@ -26,8 +26,8 @@ public class Window {
     public float r,g,b,a;
 
     private Window() {
-        this.width = 800;
-        height = 800;
+        this.width = 1920;
+        height = 1080;
         this.title = "Mario";
         r=1;
         g=1;
@@ -105,8 +105,8 @@ public class Window {
     }
 
     public void loop() {
-        float beginTime = Time.getTime();
-        float endTime = Time.getTime();
+        float beginTime = (float) glfwGetTime();
+        float endTime;
         float dt = -1.0f;
 
         // executes every frame
@@ -117,11 +117,12 @@ public class Window {
             glClear(GL_COLOR_BUFFER_BIT);
 
             if (dt >= 0) {
+                System.out.println(1/dt);
                 currentScene.update(dt);
             }
 
             glfwSwapBuffers(glfwWindow);
-            endTime = Time.getTime();
+            endTime = (float) glfwGetTime();
             dt = endTime - beginTime;
             beginTime = endTime;
 
