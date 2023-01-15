@@ -229,4 +229,15 @@ public class Shader {
             assert false : "";
         }
     }
+
+    /**
+     * Load textureID to shader
+     * @param varName
+     * @param slot
+     */
+    public void uploadTexture(String varName, int slot) {
+        int varLocation = glGetUniformLocation(shaderProgramID, varName);
+        use();
+        glUniform1i(varLocation, slot);
+    }
 }
