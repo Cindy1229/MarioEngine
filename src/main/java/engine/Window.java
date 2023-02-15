@@ -117,7 +117,7 @@ public class Window {
             glClear(GL_COLOR_BUFFER_BIT);
 
             if (dt >= 0) {
-                System.out.println(1/dt);
+//                System.out.println(1/dt);
                 currentScene.update(dt);
             }
 
@@ -137,10 +137,13 @@ public class Window {
             case 0:
                 currentScene = new LevelEditorScene();
                 currentScene.init();
+                // start all game objects under the scene
+                currentScene.start();
                 break;
             case 1:
                 currentScene = new LevelScene();
                 currentScene.init();
+                currentScene.start();
                 break;
             default:
                 assert false : "Unknown Scene " + newScene + "";

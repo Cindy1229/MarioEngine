@@ -1,5 +1,6 @@
 package engine;
 
+import components.SpriteRenderer;
 import org.joml.Vector2f;
 import org.lwjgl.BufferUtils;
 import renderer.Shader;
@@ -58,12 +59,20 @@ public class LevelEditorScene extends Scene {
 
     private Texture testTexture;
 
+    GameObject testObj;
+    boolean isFirstTime = false;
+
     public LevelEditorScene() {
         System.out.println("Entering level editor scene...");
     }
 
     @Override
     public void init() {
+        System.out.println("creating test obj");
+        this.testObj = new GameObject("test");
+        this.testObj.addComponent(new SpriteRenderer());
+        this.addGameObjectToScene(this.testObj);
+
         // initialize camera
         camera = new Camera(new Vector2f(0.0f, 0.0f));
 
@@ -147,6 +156,18 @@ public class LevelEditorScene extends Scene {
 
         // detach shader program
         defaultShader.detach();
+
+        if (!isFirstTime) {
+            System.out.println("creating another game object");
+            GameObject go = new GameObject("new game obj");
+            go.addComponent(new SpriteRenderer());
+            this.addGameObjectToScene(go);
+            isFirstTime = true;
+        }
+
+        for (GameObject go : this.gameObjects) {
+            go.update(dt);
+        }
 
     }
 
