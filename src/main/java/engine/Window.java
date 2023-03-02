@@ -149,4 +149,8 @@ public class Window {
                 assert false : "Unknown Scene " + newScene + "";
         }
     }
+
+    public static Scene getScene() {
+        return get().currentScene;
+    }
 }
