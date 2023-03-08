@@ -30,9 +30,13 @@ public class Renderer {
 
         for (RenderBatch batch : batches) {
             if (batch.hasRoom()) {
-                batch.addSprite(sprite);
-                added = true;
-                break;
+                // limit the number of texture spritesheet to 8 per sprite
+                Texture tex = sprite.getTexture();
+                if (tex != null && (batch.hasTexture(tex) || batch.hasTextureRoom())) {
+                    batch.addSprite(sprite);
+                    added = true;
+                    break;
+                }
             }
         }
 

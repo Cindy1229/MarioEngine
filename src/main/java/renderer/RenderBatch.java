@@ -19,6 +19,7 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
  * using one VAO/VBO to improve efficiency/fps
  */
 public class RenderBatch {
+    private static final int MAX_SPRITESHEET_NUM = 8;
     // a single vertex's attributes: position     color     texture coordinates     texture ID
     // x, y         r, g, b, a,        x, y, id
     private final int POS_SIZE = 2;
@@ -255,5 +256,21 @@ public class RenderBatch {
      */
     public boolean hasRoom() {
         return this.hasRoom;
+    }
+
+    /**
+     * Max number of spritesheet should be limited
+     */
+    public boolean hasTextureRoom() {
+        return this.textures.size() < MAX_SPRITESHEET_NUM;
+    }
+
+    /**
+     * Checks if the spritesheet has already been loaded
+     * @param texture
+     * @return
+     */
+    public boolean hasTexture(Texture texture) {
+        return this.textures.contains(texture);
     }
 }
